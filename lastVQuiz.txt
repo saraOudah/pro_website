@@ -1,0 +1,464 @@
+html:<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Menu</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <h1>Course Menu
+                <img src="images/lock.png" class="toggle-scrollbar" alt="Toggle Scrollbar">
+            </h1>
+            <hr>
+            <ul id="course-menu">
+                <!-- Course items will be added dynamically here -->
+            </ul>
+        </div>
+        <div class="main-content">
+            <div class="video-wrapper">
+                <video id="course-video" controls autoplay>
+                    <source src="videos/welcome.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+            
+        </div>
+                
+    </div>
+    <script src="scripts.js"></script>
+</body>
+</html>
+
+Js:document.addEventListener('DOMContentLoaded', function() {
+    const courseMenu = [
+        {
+            title: "Programming Courses",
+            items: [
+                { name: "Welcome", video: "videos/welcome.mp4" },
+                { name: "What is Coding?", video: "videos/What is Coding_.mp4" },
+                { name: "Java", video: "videos/java.mp4" },
+                { name: "Benefits of Learning Java", video: "videos/benfit.mp4" },
+                { name: "Java-Quiz", type: "quiz", questions: [
+                    { question: "What does JVM stand for?", answers: ["Java Virtual Machine", "Java Very Much", "Java Verified Method"], correct: 0 }
+                ]},
+                { name: "Location of available courses for Java", video: "videos/java-location.mp4" },
+                { name: "Python", video: "videos/python.mp4" },
+                { name: "Python in Data Science", video: "videos/python.mp4" },
+                { name: "Python-Quiz", type: "quiz", questions: [
+                    { question: "Which of the following is a Python data type?", answers: ["list", "array", "vector"], correct: 0 }
+                ]},
+                { name: "Location of available courses for Python", video: "videos/python-location.mp4" },
+                { name: "JavaScript", video: "videos/JavaScript.mp4" },
+                { name: "JavaScript for Web Development", video: "videos/JavaScript.mp4" },
+                { name: "JavaScript-Quiz", type: "quiz", questions: [
+                    { question: "What is used to declare a variable in JavaScript?", answers: ["let", "var", "const", "all of the above"], correct: 3 }
+                ]},
+                { name: "Location of available courses for JavaScript", video: "videos/javascript-location.mp4" },
+                { name: "HTML", video: "videos/html.mp4" },
+                { name: "HTML Best Practices", video: "videos/html.mp4" },
+                { name: "HTML-Quiz", type: "quiz", questions: [
+                    { question: "What does HTML stand for?", answers: ["HyperText Markup Language", "HighText Machine Language", "HyperText and links Markup Language"], correct: 0 }
+                ]},
+                { name: "Location of available courses for HTML", video: "videos/html-location.mp4" }
+            ]
+        },
+        {
+            title: "Development Courses",
+            items: [
+                { name: "Web Development Fundamentals", video: "videos/Web Development.mp4" },
+                { name: "Database Design", video: "videos/DB.mp4" }
+            ]
+        }
+    ];
+
+    const courseMenuList = document.getElementById('course-menu');
+    const mainContent = document.querySelector('.main-content');
+    const toggleScrollbarIcon = document.querySelector('.toggle-scrollbar');
+    const sidebar = document.querySelector('.sidebar');
+    let activeCourse = null;
+
+    // Toggle scrollbar visibility and sidebar height
+    toggleScrollbarIcon.addEventListener('click', function() {
+        const isMinimized = sidebar.classList.toggle('minimized');
+        mainContent.classList.toggle('full-height', isMinimized);
+        toggleScrollbarIcon.src = isMinimized ? 'images/unlock.png' : 'images/lock.png';
+        sidebar.style.overflowY = isMinimized ? 'auto' : 'hidden';
+        mainContent.style.overflowY = isMinimized ? 'hidden' : 'auto';
+    });
+
+    // Generate course menu dynamically
+    courseMenu.forEach(category => {
+        const categoryItem = document.createElement('li');
+        categoryItem.classList.add('category-item');
+
+        const categoryTitle = document.createElement('span');
+        categoryTitle.textContent = category.title;
+        categoryItem.appendChild(categoryTitle);
+
+        const nestedList = document.createElement('ul');
+        nestedList.classList.add('nested');
+
+        category.items.forEach(course => {
+            const listItem = document.createElement('li');
+            listItem.classList.add('course-item');
+
+            const courseName = document.createElement('span');
+            courseName.textContent = course.name;
+            listItem.appendChild(courseName);
+
+            listItem.addEventListener('click', function(event) {
+                event.stopPropagation();
+
+                if (course.type === 'quiz') {
+                    mainContent.innerHTML = generateQuizHtml(course.name, course.questions);
+                    setupQuizHandler(course.questions);
+                } else {
+                    mainContent.innerHTML = `
+                        <h1>${course.name}</h1><br>
+                        <div class="video-wrapper">
+                            <video controls autoplay>
+                                <source src="${course.video}" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                        </div>
+                    `;
+                }
+
+                if (activeCourse) {
+                    activeCourse.classList.remove('active');
+                }
+
+                listItem.classList.add('active');
+                activeCourse = listItem;
+            });
+
+            nestedList.appendChild(listItem);
+        });
+
+        categoryItem.appendChild(nestedList);
+
+        categoryItem.addEventListener('click', function() {
+            this.classList.toggle('open');
+        });
+
+        courseMenuList.appendChild(categoryItem);
+    });
+
+    // Generate HTML for quiz
+    function generateQuizHtml(title, questions) {
+        let quizHtml = `<h1>${title}</h1><div class="quiz-container">`;
+        questions.forEach((q, index) => {
+            quizHtml += `
+                <div class="quiz-question-container">
+                    <p class="quiz-question">${q.question}</p>
+                    ${q.answers.map((answer, i) => `
+                        <div>
+                            <input type="radio" id="q${index}a${i}" name="q${index}" value="${i}">
+                            <label for="q${index}a${i}">${answer}</label>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        });
+        quizHtml += `<button id="submit-quiz" disabled>Submit</button></div>`;
+        quizHtml += `<div id="popup" class="popup"><div class="popup-content"><span class="close">&times;</span><p id="popup-text"></p></div></div>`;
+        return quizHtml;
+    }
+
+    // Setup handler for quiz submission
+    function setupQuizHandler(questions) {
+        const submitButton = document.getElementById('submit-quiz');
+        const radioButtons = document.querySelectorAll('input[type="radio"]');
+
+        // Enable submit button when a radio button is selected
+        radioButtons.forEach(radio => {
+            radio.addEventListener('change', function() {
+                submitButton.disabled = false;
+                submitButton.style.backgroundColor = '#428254'; // Enabled button color
+            });
+        });
+
+        submitButton.addEventListener('click', function() {
+            const popup = document.getElementById('popup');
+            const popupText = document.getElementById('popup-text');
+            let correct = true;
+            questions.forEach((question, index) => {
+                const selectedAnswer = document.querySelector(`input[name="q${index}"]:checked`);
+                if (!selectedAnswer || parseInt(selectedAnswer.value) !== question.correct) {
+                    correct = false;
+                }
+            });
+            popupText.textContent = correct ? "Correct answer!  Good job" : " Incorrect answer !    Try Again";
+            popup.style.display = 'block';
+
+            const closeBtn = document.querySelector('.close');
+            closeBtn.addEventListener('click', function() {
+                popup.style.display = 'none';
+            });
+
+            window.addEventListener('click', function(event) {
+                if (event.target === popup) {
+                    popup.style.display = 'none';
+                }
+            });
+        });
+    }
+});
+
+CSS:body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    display: flex;
+    height: 100vh;
+}
+
+.sidebar {
+    width: 250px;
+    background: #f4f8e5;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar.minimized {
+    height: 480px;
+    overflow-y: auto;
+}
+
+.main-content {
+    flex-grow: 1;
+    background: #fcfbe0;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin-left: 20px;
+    overflow-y: auto;
+}
+
+.main-content.full-height {
+    height: calc(100vh - 50px);
+}
+
+.main-content .video-wrapper {
+    display: flex;
+    justify-content: center; 
+    align-items: center; 
+    height: calc(100% - 100px); 
+}
+
+.main-content .video-wrapper video {
+    width: 100%; 
+    max-width: 88%; 
+    height: auto; /* Let the video maintain its aspect ratio */
+    max-height: 80vh; /* Limit maximum height */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Optional: add shadow for better visibility */
+    border-radius: 8px; /* Optional: add rounded corners */
+}
+
+h1 {
+    color: #333;
+    text-align: center;
+    font-size: 2ch;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+h2 {
+    color: #333;
+    font-size: 3ch;
+    text-align: left;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+.toggle-scrollbar {
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
+}
+
+.category-item {
+    padding: 10px;
+    margin: 10px 0;
+    cursor: pointer;
+    font-style: italic;
+    position: relative;
+    font-weight: bold;
+}
+
+.category-item:hover > span {
+    color: green;
+}
+
+.category-item::before {
+    content: "";
+    background-image: url('images/angle-right.png'); 
+    background-size: contain;
+    background-repeat: no-repeat;
+    display: inline-block;
+    width: 16px; 
+    height: 16px; 
+    margin-right: 10px;
+    position: absolute;
+    left: -15px;
+}
+
+.course-item {
+    padding: 5px 10px;
+    margin: 5px 0;
+    cursor: pointer;
+    position: relative;
+    font-size: 1.7ch;
+    font-weight: lighter;
+}
+
+.course-item:hover > span {
+    color: green;
+}
+
+.course-item::before {
+    content: "";
+    background-image: url('images/minus-small.png'); 
+    background-size: contain;
+    background-repeat: no-repeat;
+    display: inline-block;
+    width: 16px; 
+    height: 16px; 
+    margin-right: 10px;
+    position: absolute;
+    left: -15px;
+}
+
+.course-item.active > span {
+    font-weight: bold;
+    color: green;
+}
+
+.nested {
+    display: none;
+    margin-left: 20px;
+}
+
+.category-item.open .nested {
+    display: block;
+}
+
+/* Styling for quiz */
+.quiz-container {
+    display: flex;
+    flex-direction: column;
+    align-items:center;
+    background-color: #c6d3bc; /* Change this color to customize */
+    padding: 28px; /* Increase padding to increase size */
+    border-radius: 12px; /* Optional: add rounded corners */
+    margin-bottom: 30px; /* Add some space between containers */
+    width: calc(100% - 40px); /* Adjust width as needed */
+    max-width: 800px; /* Limit maximum width */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Optional: add shadow */
+    height: 370px; /* Set fixed height for the quiz container */
+    max-height: 80vh; /* Limit maximum height */
+}
+
+.quiz-question-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 80%;
+    background-color: #ecf4e4; /* Change this color to customize */
+    padding: 30px; /* Increase padding to increase size */
+    border-radius: 12px; /* Optional: add rounded corners */
+    margin-bottom: 30px; /* Add some space between questions */
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.1); /* Optional: add shadow */
+    height: 330px; /* Set fixed height for the question container */
+    max-height: 80vh; /* Limit maximum height */
+}
+
+.quiz-question {
+    font-size: 1.9rem; /* Increase font size for questions */
+    margin-bottom: 20px;
+    text-align: left;
+    color: #1a3025;
+}
+.quiz-question .quiz-answer {
+    font-size: 2.2rem; /* Font size for answers */
+    margin-left: 30px; /* Add spacing between question and answers */
+    font-weight: bold;
+    
+}
+.quiz-question div {
+    margin: 10px 0;
+    text-align: left;
+}
+
+.quiz-question input[type="radio"] {
+    transform: scale(8.5); /* Increase size of radio buttons */
+    margin-right: 40px; /* Add spacing between radio buttons */
+    font-weight: bold;
+}
+
+#submit-quiz {
+    padding: 16px 32px; /* Increase button padding */
+    font-size: 1.6rem; /* Increase button font size */
+    background-color: #428254; /* Button background color */
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 5px;
+
+}
+
+#submit-quiz:hover {
+    background-color: #0a4626; /* Button hover background color */
+}
+
+#submit-quiz:disabled {
+    background-color: gray; /* Initial disabled color */
+    cursor: not-allowed; /* Optional: show not-allowed cursor */
+}
+
+#popup {
+    display: none;
+    position: fixed;
+    left: 55%;
+    top: 35%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+    background: rgb(242, 244, 228);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    z-index: 1000;
+    height: 150px;
+    width: 200px;
+}
+
+#popup .popup-content {
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    text-align: center;
+    color: rgb(36, 89, 61);
+    font-weight: bold;
+    font-size: larger;
+}
+
+#popup .popup-content .close {
+    position: absolute;
+    top: 5px;
+    right: 2px;
+    cursor: pointer;
+    height: 50px;
+    width: 50px;
+}
+
+

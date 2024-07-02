@@ -1,0 +1,282 @@
+HTML:<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Menu</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <h1>Course Menu
+                <img src="images/lock.png" class="toggle-scrollbar" alt="Toggle Scrollbar">
+            </h1>
+            <hr>
+            <ul id="course-menu">
+                <!-- Course items will be added dynamically here -->
+            </ul>
+        </div>
+        <div class="main-content">
+            <div class="video-wrapper">
+                <video id="course-video" controls autoplay>
+                    <source src="videos/welcome.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+            
+        </div>
+                
+    </div>
+    <script src="scripts.js"></script>
+</body>
+</html>
+
+JV:document.addEventListener('DOMContentLoaded', function() {
+    const courseMenu = [
+        {
+            title: "Programming Courses",
+            items: [
+                { name: "Welcome", video: "videos/welcome.mp4" },
+                { name: "What is Coding?", video: "videos/What is Coding_.mp4" },
+                { name: "Java", video: "videos/java.mp4" },
+                { name: "Benefits of Learning Java", video: "videos/benfit.mp4" },
+                { name: "Java-Quiz", video: "videos/java-quiz.mp4" },
+                { name: "Location of available courses for Java", video: "videos/java-location.mp4" },
+                { name: "Python", video: "videos/python.mp4" },
+                { name: "Python in Data Science", video: "videos/python.mp4" },
+                { name: "Python-Quiz", video: "videos/python-quiz.mp4" },
+                { name: "Location of available courses for Python", video: "videos/python-location.mp4" },
+                { name: "JavaScript", video: "videos/JavaScript.mp4" },
+                { name: "JavaScript for Web Development", video: "videos/JavaScript.mp4" },
+                { name: "JavaScript-Quiz", video: "videos/javascript-quiz.mp4" },
+                { name: "Location of available courses for JavaScript", video: "videos/javascript-location.mp4" },
+                { name: "HTML", video: "videos/html.mp4" },
+                { name: "HTML Best Practices", video: "videos/html.mp4" },
+                { name: "HTML-Quiz", video: "videos/html-quiz.mp4" },
+                { name: "Location of available courses for HTML", video: "videos/html-location.mp4" }
+            ]
+        },
+        {
+            title: "Development Courses",
+            items: [
+                { name: "Web Development Fundamentals", video: "videos/Web Development.mp4" },
+                { name: "Database Design", video: "videos/DB.mp4" }
+            ]
+        }
+    ];
+
+    const courseMenuList = document.getElementById('course-menu');
+    const mainContent = document.querySelector('.main-content');
+    const toggleScrollbarIcon = document.querySelector('.toggle-scrollbar');
+    const sidebar = document.querySelector('.sidebar');
+    let activeCourse = null;
+
+    // Toggle scrollbar visibility and sidebar height
+    toggleScrollbarIcon.addEventListener('click', function() {
+        const isMinimized = sidebar.classList.toggle('minimized');
+        mainContent.classList.toggle('full-height', isMinimized);
+        toggleScrollbarIcon.src = isMinimized ? 'images/unlock.png' : 'images/lock.png';
+        sidebar.style.overflowY = isMinimized ? 'auto' : 'hidden';
+        mainContent.style.overflowY = isMinimized ? 'hidden' : 'auto';
+    });
+
+    courseMenu.forEach(category => {
+        const categoryItem = document.createElement('li');
+        categoryItem.classList.add('category-item');
+
+        const categoryTitle = document.createElement('span');
+        categoryTitle.textContent = category.title;
+        categoryItem.appendChild(categoryTitle);
+
+        const nestedList = document.createElement('ul');
+        nestedList.classList.add('nested');
+
+        category.items.forEach(course => {
+            const listItem = document.createElement('li');
+            listItem.classList.add('course-item');
+
+            const courseName = document.createElement('span');
+            courseName.textContent = course.name;
+            listItem.appendChild(courseName);
+
+            listItem.addEventListener('click', function(event) {
+                event.stopPropagation();
+
+                mainContent.innerHTML = `
+                    <h1>${course.name}</h1><br>
+                    <div class="video-wrapper">
+                        <video controls autoplay>
+                            <source src="${course.video}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                `;
+
+                if (activeCourse) {
+                    activeCourse.classList.remove('active');
+                }
+
+                listItem.classList.add('active');
+                activeCourse = listItem;
+            });
+
+            nestedList.appendChild(listItem);
+        });
+
+        categoryItem.appendChild(nestedList);
+
+        categoryItem.addEventListener('click', function() {
+            this.classList.toggle('open');
+        });
+
+        courseMenuList.appendChild(categoryItem);
+    });
+});
+
+CSS:body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    display: flex;
+    height: 100vh;
+}
+
+.sidebar {
+    width: 250px;
+    background: #f4f8e5;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    
+}
+
+.sidebar.minimized {
+    height: 480px;
+    overflow-y: auto;
+}
+
+.main-content {
+    flex-grow: 1;
+    background: #fcfbe0;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin-left: 20px;
+    overflow-y: auto;
+}
+
+.main-content.full-height {
+    height: calc(100vh - 50px);
+}
+.main-content .video-wrapper {
+    display: flex;
+    justify-content: center; 
+    align-items: center; 
+    height: calc(100% - 100px); 
+}
+
+.main-content .video-wrapper video {
+    width: 100%; 
+    max-width: 88%; 
+    height: auto; /* Let the video maintain its aspect ratio */
+    max-height: 80vh; /* Limit maximum height */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Optional: add shadow for better visibility */
+    border-radius: 8px; /* Optional: add rounded corners */
+}
+
+
+
+h1 {
+    color: #333;
+    text-align: center;
+    font-size: 2ch;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+h2 {
+    color: #333;
+    font-size: 3ch;
+    text-align: left;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+.toggle-scrollbar {
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
+}
+
+.category-item {
+    padding: 10px;
+    margin: 10px 0;
+    cursor: pointer;
+    font-style: italic;
+    position: relative;
+    font-weight: bold;
+}
+
+.category-item:hover > span {
+    color: green;
+}
+
+.category-item::before {
+    content: "";
+    background-image: url('images/angle-right.png'); 
+    background-size: contain;
+    background-repeat: no-repeat;
+    display: inline-block;
+    width: 16px; 
+    height: 16px; 
+    margin-right: 10px;
+    position: absolute;
+    left: -15px;
+}
+
+.course-item {
+    padding: 5px 10px;
+    margin: 5px 0;
+    cursor: pointer;
+    position: relative;
+    font-size: 1.7ch;
+    font-weight:lighter;
+}
+
+.course-item:hover > span {
+    color: green;
+}
+
+.course-item::before {
+    content: "";
+    background-image: url('images/minus-small.png'); 
+    background-size: contain;
+    background-repeat: no-repeat;
+    display: inline-block;
+    width: 16px; 
+    height: 16px; 
+    margin-right: 10px;
+    position: absolute;
+    left: -15px;
+}
+
+.course-item.active > span {
+    font-weight: bold;
+    color: green;
+}
+
+.nested {
+    display: none;
+    margin-left: 20px;
+}
+
+.category-item.open .nested {
+    display: block;
+}

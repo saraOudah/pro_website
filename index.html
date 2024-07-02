@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Menu</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="header-logo">
+            <img src="images/Preview-removebg-preview.png" alt="Logo" style="width: 100px; height: 100px;">
+        </div>
+        <div class="header-title">
+            Unlock Your Coding Potential!
+        </div>
+        <div class="header-line"></div>
+    </div>
+    
+    <div class="container">
+        <div class="sidebar">
+            <h1>Course Menu
+                <img src="images/lock.png" class="toggle-scrollbar" alt="Toggle Scrollbar">
+            </h1>
+            <hr>
+            <ul id="course-menu">
+                <!-- Course items will be added dynamically here -->
+            </ul>
+        </div>
+        <div class="main-content">
+            <h1>Welcome</h1><br>
+            <div class="video-wrapper">
+                <video id="course-video" controls autoplay>
+                    <source src="videos/welcome.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+
+            <div id="map" style="height: 100%; width: 100%;"></div>
+        </div>
+    </div>
+    <script src="scripts.js"></script>
+</body>
+</html>
