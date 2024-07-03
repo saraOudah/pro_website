@@ -139,7 +139,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <h1>${course.name} in Saudi Arabia</h1>
                 <button class="location-button" data-course="${courseName}" data-action="show-riyadh">Show Riyadh Location</button>
                 <button class="location-button" data-course="${courseName}" data-action="show-all">Show All Locations</button>
-                <div id="map" style="height: 500px; width: 100%;"></div>
+                <div id="map" class="map"></div>
                 <button id="continue-button" class="continue-button">Continue</button>`;
             setupMap(courseName);
         } else {

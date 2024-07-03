@@ -337,6 +337,10 @@ ul {
 .location-button:hover {
     background-color: #b3e0ff; 
 }
+.map {
+    height: 500px;
+    width: 100%;
+}
 
 @media screen and (max-width: 990px) {
     .container {
@@ -393,4 +397,11 @@ ul {
         padding: 12px 20px;
         font-size: 1.2rem;
     }
+    .header-title {
+        font-size: 1.1rem;
+        font-weight: bold;
+    }
+    .map{ 
+        height:350px;
+        width: 100%;}
 }
