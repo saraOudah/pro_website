@@ -263,7 +263,7 @@ document.addEventListener('DOMContentLoaded', function() {
     };
     function setupContinueButton(currentIndex, items) {
         const continueButton = document.getElementById('continue-button');
-        continueButton.classList.add('continue-button'); // Add this line to add the class
+        continueButton.classList.add('continue-button'); 
         continueButton.addEventListener('click', function() {
             const nextIndex = currentIndex + 1;
             if (nextIndex < items.length) {
